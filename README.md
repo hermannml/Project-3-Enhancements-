@@ -12,19 +12,12 @@ Plotting voltage profiles before and after fault studies is equally important. I
 ## Inputs and outputs structure
 Inputs
 * Bus Configuration: add_bus(name, base_kv) — Define bus names and their voltage levels
-
 * Transmission Lines: add_conductor(...) — Define conductor type and electrical parameters [add_bundle(...) — Define conductor bundling, add_geometry(...) — Define line geometry, add_tline(name, from_bus, to_bus, bundle, geometry, length) — Connect buses with defined lines]
-
 * Transformers: add_transformer(name, bus1, bus2, MVA, V1, V2, type, z_ground) — Add transformer and grounding impedance
-
 * Generators: add_generator(name, bus, MW, MVAR, Vset, isPV) — Define generator capacity and bus type
-
 * Loads: add_load(name, bus, MW, MVAR) — Specify load power demand at each bus
-
 * Tracked Buses: set_tracked_buses(["Bus3", "Bus5", "Bus7"]) — Select buses to monitor voltage profiles
-
 * Power Flow Settings: tolerance, max_iterations — Convergence criteria for Newton-Raphson solver
-
 * Fault Study Parameters: 
   - User input via CLI: fault type (1–4) and faulted bus name
   - Assumed values: Vprefault = 1.0 + 0j, Zf = 0 for bolted faults
@@ -32,15 +25,10 @@ Inputs
 Outputs
 
 * Bus Type Display: Prints classification of each bus (Slack, PV, PQ) to console
-
 * Power Flow Solution: Bus voltages (p.u.) and phase angles (rad) after convergence
-
 * Power mismatch (ΔP, ΔQ) at each bus: Formatted Jacobian matrix with labeled partial derivatives
-
 * Voltage Profile Logging: voltage_profiles = {"Bus3": [("Initial", 1.0), ("Iteration 1", 0.98), ...]}
-
 * Voltage Profile Plot: Line graph (matplotlib) of voltage vs. iteration/fault stage for tracked buses
-
 * Fault Study Output: Fault current magnitude and angle
 
 ## Instruction for running
@@ -55,51 +43,34 @@ Outputs
 
 ## Instructions for testing and validation
 1. Structural Validation
-
 * Buses are defined with correct base voltages.
-
 * Generators are added on appropriate bus types (Slack or PV).
-
 * Loads are assigned to PQ buses with correct real and reactive powers.
-
 * Transformers and transmission lines are connected between the right bus pairs.
-
 * A printed system summary confirms the system topology.
 
 2. Power Flow Validation
-
 * Newton-Raphson converges within a specified tolerance (e.g., 1e-6).
-
 * The mismatch per iteration is printed and visibly reduces.
-
 * Final voltage magnitudes and angles are printed per bus.
-
 * Iteration count is reasonable (typically < 10).
-
 * Results can optionally be compared to hand calculations on small test cases.
 
 3. Voltage Profile Tracking Validation
-
 * Tracked buses are correctly set using set_tracked_buses().
-
 * The voltage_profiles dictionary records the correct number of stages.
-
 * Voltage is tracked: [Initially, After each iteration of power flow, 
 Before and after fault conditions]
-
 * Plots using plot_all_voltage_profiles() show labeled trends.
 
 4. Fault Analysis Validation
-
 * Simulate all fault types: 3-phase, LG, LL, and LLG.
 * Calculate fault currents and compare with expected formulas.
 * Validate voltage changes at all buses post-fault.
 
 5. Cross-Validation Using PowerWorld
-
-To confirm simulator accuracy with PowerWorld:
-
-Build the same power system in PowerWorld (same buses, lines, loads, etc.).
+* To confirm simulator accuracy with PowerWorld:
+  **Build the same power system in PowerWorld (same buses, lines, loads, etc.).
 
 Run the power flow analysis and record:
 
