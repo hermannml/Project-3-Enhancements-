@@ -11,7 +11,7 @@ Plotting voltage profiles before and after fault studies is equally important. I
 
 ## Inputs and outputs structure
 Inputs
-Bus Configuration: add_bus(name, base_kv) — Define bus names and their voltage levels
+* Bus Configuration: add_bus(name, base_kv) — Define bus names and their voltage levels
 
 Transmission Lines: add_conductor(...) — Define conductor type and electrical parameters [add_bundle(...) — Define conductor bundling, add_geometry(...) — Define line geometry, add_tline(name, from_bus, to_bus, bundle, geometry, length) — Connect buses with defined lines]
 
