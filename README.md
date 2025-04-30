@@ -54,8 +54,95 @@ Outputs
 
 
 ## Instructions for testing and validation
-## Validation and Testing
-TO DO: compare results with powerworld and include at least 2 test cases and it's results
+1. Structural Validation
+
+* Buses are defined with correct base voltages.
+
+* Generators are added on appropriate bus types (Slack or PV).
+
+* Loads are assigned to PQ buses with correct real and reactive powers.
+
+* Transformers and transmission lines are connected between the right bus pairs.
+
+* A printed system summary confirms the system topology.
+
+2. Power Flow Validation
+
+* Newton-Raphson converges within a specified tolerance (e.g., 1e-6).
+
+* The mismatch per iteration is printed and visibly reduces.
+
+* Final voltage magnitudes and angles are printed per bus.
+
+* Iteration count is reasonable (typically < 10).
+
+* Results can optionally be compared to hand calculations on small test cases.
+
+3. Voltage Profile Tracking Validation
+
+* Tracked buses are correctly set using set_tracked_buses().
+
+* The voltage_profiles dictionary records the correct number of stages.
+
+* Voltage is tracked: [Initially, After each iteration of power flow, 
+Before and after fault conditions]
+
+* Plots using plot_all_voltage_profiles() show labeled trends.
+
+4. Fault Analysis Validation
+
+* Simulate all fault types: 3-phase, LG, LL, and LLG.
+* Calculate fault currents and compare with expected formulas.
+* Validate voltage changes at all buses post-fault.
+
+5. Cross-Validation Using PowerWorld
+
+To confirm simulator accuracy with PowerWorld:
+
+Build the same power system in PowerWorld (same buses, lines, loads, etc.).
+
+Run the power flow analysis and record:
+
+Voltage magnitude and angle at each bus
+
+Use "Export Case Info" to save results to CSV or Excel.
+
+Compare PowerWorld bus voltages and angles to your simulator outputs:
+
+Acceptable margin: ±0.001 p.u., ±0.1°
+
+For fault studies:
+
+Use PowerWorld’s Fault Analysis tool
+
+Match fault current and post-fault voltages from both tools
+
+6. Visualization and Tracking
+
+Voltage labels such as "Initial", "Iteration 1", "Before Fault", etc. appear in the plots.
+
+All tracked buses show clearly separated line plots.
+
+Legends and axis labels are present and correctly formatted.
+
+Optional: Add a mismatch convergence plot (mismatch vs. iteration).
+
+7. Regression Testing (Advanced)
+
+Store simulation outputs from a known stable version.
+
+Re-run same test after changes.
+
+Compare:
+
+Voltage profiles
+
+Final voltages/angles
+
+Fault results
+
+Use assertions or CSV comparisons to detect deviations.
+
 ## References
 Grainger, J. J., & Stevenson, W. D. (1994). Power system analysis. McGraw-Hill.
 Anderson, P. M. (1995). Analysis of faulted power systems. IEEE Press.
