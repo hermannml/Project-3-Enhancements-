@@ -13,38 +13,44 @@ Plotting voltage profiles before and after fault studies is equally important. I
 Inputs
 * Bus Configuration: add_bus(name, base_kv) — Define bus names and their voltage levels
 
-Transmission Lines: add_conductor(...) — Define conductor type and electrical parameters [add_bundle(...) — Define conductor bundling, add_geometry(...) — Define line geometry, add_tline(name, from_bus, to_bus, bundle, geometry, length) — Connect buses with defined lines]
+* Transmission Lines: add_conductor(...) — Define conductor type and electrical parameters [add_bundle(...) — Define conductor bundling, add_geometry(...) — Define line geometry, add_tline(name, from_bus, to_bus, bundle, geometry, length) — Connect buses with defined lines]
 
-Transformers: add_transformer(name, bus1, bus2, MVA, V1, V2, type, z_ground) — Add transformer and grounding impedance
+* Transformers: add_transformer(name, bus1, bus2, MVA, V1, V2, type, z_ground) — Add transformer and grounding impedance
 
-Generators: add_generator(name, bus, MW, MVAR, Vset, isPV) — Define generator capacity and bus type
+* Generators: add_generator(name, bus, MW, MVAR, Vset, isPV) — Define generator capacity and bus type
 
-Loads: add_load(name, bus, MW, MVAR) — Specify load power demand at each bus
+* Loads: add_load(name, bus, MW, MVAR) — Specify load power demand at each bus
 
-Tracked Buses: set_tracked_buses(["Bus3", "Bus5", "Bus7"]) — Select buses to monitor voltage profiles
+* Tracked Buses: set_tracked_buses(["Bus3", "Bus5", "Bus7"]) — Select buses to monitor voltage profiles
 
-Power Flow Settings: tolerance, max_iterations — Convergence criteria for Newton-Raphson solver
+* Power Flow Settings: tolerance, max_iterations — Convergence criteria for Newton-Raphson solver
 
-Fault Study Parameters: 
-  User input via CLI: fault type (1–4) and faulted bus name
-  Assumed values: Vprefault = 1.0 + 0j, Zf = 0 for bolted faults
+* Fault Study Parameters: 
+  - User input via CLI: fault type (1–4) and faulted bus name
+  - Assumed values: Vprefault = 1.0 + 0j, Zf = 0 for bolted faults
 
 Outputs
 
-Bus Type Display: Prints classification of each bus (Slack, PV, PQ) to console
+* Bus Type Display: Prints classification of each bus (Slack, PV, PQ) to console
 
-Power Flow Solution: Bus voltages (p.u.) and phase angles (rad) after convergence
+* Power Flow Solution: Bus voltages (p.u.) and phase angles (rad) after convergence
 
-Power mismatch (ΔP, ΔQ) at each bus: Formatted Jacobian matrix with labeled partial derivatives
+* Power mismatch (ΔP, ΔQ) at each bus: Formatted Jacobian matrix with labeled partial derivatives
 
-Voltage Profile Logging: voltage_profiles = {"Bus3": [("Initial", 1.0), ("Iteration 1", 0.98), ...]}
+* Voltage Profile Logging: voltage_profiles = {"Bus3": [("Initial", 1.0), ("Iteration 1", 0.98), ...]}
 
-Voltage Profile Plot: Line graph (matplotlib) of voltage vs. iteration/fault stage for tracked buses
+* Voltage Profile Plot: Line graph (matplotlib) of voltage vs. iteration/fault stage for tracked buses
 
-Fault Study Output: Fault current magnitude and angle
+* Fault Study Output: Fault current magnitude and angle
 
 ## Instruction for running
-For running this simulator and it's enhancements it's necessary the following library: matplotlib
+1. For running this simulator and it's enhancements it's necessary the following library: numpy pandas matplotlib
+2. To ensure function install all python files in this github.
+3. Alter any values in the file main.py, such as buses, lines, transformers, generators, and loads.
+4. The main file already sets up the voltage tracking but you may alter what Bus you are trying to analyse it's voltage.
+5. You may run the power flow in your main using solution.power_flow() and the voltage will be tracked automatically, each iteration necessary will have its own voltage recorded.
+6. You may run the one of the fault studies in your main using solution.fault_study() and the voltage will be tracked automatically, each fault will have its own before and after voltage recordes.
+7. The final action in main.py is solution.plot_all_voltage_profiles() this will print a list of the voltages tracked and will also graph them.
 
 
 ## Instructions for testing and validation
