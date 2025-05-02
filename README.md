@@ -61,8 +61,10 @@ Outputs
 3. Voltage Profile Tracking Validation
 * Tracked buses are correctly set using set_tracked_buses().
 * The voltage_profiles dictionary records the correct number of stages.
-* Voltage is tracked: [Initially, After each iteration of power flow, 
-Before and after fault conditions]
+* Voltage is tracked:
+- Initially
+- After each iteration of power flow
+- Before and after fault conditions
 * Plots using plot_all_voltage_profiles() show labeled trends.
 
 4. Fault Analysis Validation
@@ -72,12 +74,12 @@ Before and after fault conditions]
 
 5. Cross-Validation Using PowerWorld
 * To confirm simulator accuracy with PowerWorld:
-  **Build the same power system in PowerWorld (same buses, lines, loads, etc.).
+- Build the same power system in PowerWorld (same buses, lines, loads, etc.).
 * Run the power flow analysis and record:
-** Voltage magnitude and angle at each bus
+- Voltage magnitude and angle at each bus
 * Use "Export Case Info" to save results to CSV or Excel.
 * Compare PowerWorld bus voltages and angles to your simulator outputs:
-** Acceptable margin: ±0.001 p.u., ±0.1°
+- Acceptable margin: ±0.001 p.u., ±0.1°
 * For fault studies:
 * Use PowerWorld’s Fault Analysis tool
 * Match fault current and post-fault voltages from both tools
@@ -91,9 +93,9 @@ Before and after fault conditions]
 * Store simulation outputs from a known stable version.
 * Re-run same test after changes.
 * Compare:
-** Voltage profiles
-** Final voltages/angles
-** Fault results
+- Voltage profiles
+- Final voltages/angles
+- Fault results
 * Use assertions or CSV comparisons to detect deviations.
 
 ## References
