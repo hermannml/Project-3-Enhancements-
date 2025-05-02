@@ -158,6 +158,9 @@ class Solution {
     +ybus: matrix
     +voltages: dict
     +angles: dict
+    + set_tracked_bus(bus_name: str): void
+    + track_voltage(label: str): void
+    + plot_voltage_profile(tracked_bus=None): void
     + get_voltages(): dict
     + compute_power_injection(): void
     + compute_power_mismatch(): void
