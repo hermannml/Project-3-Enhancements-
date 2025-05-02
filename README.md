@@ -72,47 +72,45 @@ Before and after fault conditions]
 * To confirm simulator accuracy with PowerWorld:
   **Build the same power system in PowerWorld (same buses, lines, loads, etc.).
 
-Run the power flow analysis and record:
+* Run the power flow analysis and record:
 
-Voltage magnitude and angle at each bus
+** Voltage magnitude and angle at each bus
 
-Use "Export Case Info" to save results to CSV or Excel.
+* Use "Export Case Info" to save results to CSV or Excel.
 
-Compare PowerWorld bus voltages and angles to your simulator outputs:
+* Compare PowerWorld bus voltages and angles to your simulator outputs:
 
-Acceptable margin: ±0.001 p.u., ±0.1°
+** Acceptable margin: ±0.001 p.u., ±0.1°
 
-For fault studies:
+* For fault studies:
 
-Use PowerWorld’s Fault Analysis tool
+* Use PowerWorld’s Fault Analysis tool
 
-Match fault current and post-fault voltages from both tools
+* Match fault current and post-fault voltages from both tools
 
 6. Visualization and Tracking
 
-Voltage labels such as "Initial", "Iteration 1", "Before Fault", etc. appear in the plots.
+* Voltage labels such as "Initial", "Iteration 1", "Before Fault", etc. appear in the plots.
 
-All tracked buses show clearly separated line plots.
+* All tracked buses show clearly separated line plots.
 
-Legends and axis labels are present and correctly formatted.
-
-Optional: Add a mismatch convergence plot (mismatch vs. iteration).
+* Legends and axis labels are present and correctly formatted.
 
 7. Regression Testing (Advanced)
 
-Store simulation outputs from a known stable version.
+* Store simulation outputs from a known stable version.
 
-Re-run same test after changes.
+* Re-run same test after changes.
 
-Compare:
+* Compare:
 
-Voltage profiles
+** Voltage profiles
 
-Final voltages/angles
+** Final voltages/angles
 
-Fault results
+** Fault results
 
-Use assertions or CSV comparisons to detect deviations.
+* Use assertions or CSV comparisons to detect deviations.
 
 ## References
 Grainger, J. J., & Stevenson, W. D. (1994). Power system analysis. McGraw-Hill.
