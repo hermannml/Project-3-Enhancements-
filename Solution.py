@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from Circuit import Circuit
 from SystemSettings import SystemSettings
+import matplotlib.pyplot as plt
 
 
 class Solution:
@@ -13,6 +14,42 @@ class Solution:
         self.zbus_pos = circuit.zbus_pos
         self.zbus_neg = circuit.zbus_neg
         self.zbus_zero = circuit.zbus_zero
+        self.voltage_profile = {}  # Track voltage over iterations
+        self.tracked_bus = None  # Specify which bus to track
+
+    def set_tracked_bus(self, bus_name):
+        if bus_name not in self.circuit.buses:
+            raise ValueError(f"Bus '{bus_name}' not found in the circuit.")
+        self.tracked_bus = bus_name
+        self.voltage_profile = {bus_name: []}
+
+    def track_voltage(self, label):
+        if self.tracked_bus is not None:
+            # Store a copy of the current value to avoid referencing the same object
+            self.voltage_profile[self.tracked_bus].append((label, float(self.voltages[self.tracked_bus])))
+
+    def plot_voltage_profile(self, tracked_bus=None):
+        if tracked_bus is None:
+            tracked_bus = self.tracked_bus
+
+        if tracked_bus is None or tracked_bus not in self.voltage_profile:
+            print("No tracked bus voltage profile available.")
+            return
+
+        print(f"Voltage Profile for Tracked Bus:")
+        for label, voltage in self.voltage_profile[tracked_bus]:
+            print(f"{label:<20} →  {voltage:.6f} p.u.")
+
+        labels, voltages = zip(*self.voltage_profile[tracked_bus])
+        plt.figure(figsize=(10, 5))
+        plt.plot(voltages, marker='o')
+        plt.xticks(ticks=range(len(labels)), labels=labels, rotation=45)
+        plt.xlabel("Iteration")
+        plt.ylabel("Voltage (p.u.)")
+        plt.title(f"Voltage Profile at {tracked_bus}")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
 
     def get_voltages(self):
         voltages = {}
@@ -102,20 +139,17 @@ class Solution:
         return np.array(delta_p + delta_q)
 
     def newton_raphson(self, tolerance=0.001, max_iterations=50):
+        self.track_voltage("Init")
+
         for i in range(max_iterations):
             print(f"\nIteration {i + 1}:")
-
-            # Step 1: compute mismatches
             mismatches = self.compute_power_mismatch()
             max_mismatch = np.max(np.abs(mismatches))
-
             print(f"\nMax mismatch = {max_mismatch:.6f}")
 
-            # Step 2: compute Jacobian
             from Jacobian import Jacobian
             J = Jacobian(self).calc_jacobian()
 
-            # Step 3: solve for Δx
             try:
                 delta_x = np.linalg.solve(J, mismatches)
             except np.linalg.LinAlgError:
@@ -124,88 +158,19 @@ class Solution:
 
             if max_mismatch < tolerance:
                 print("\nConverged!")
-
-                print("\nNEWTON-RAPHSON SOLUTION SUMMARY")
-                print("=" * 60)
-                print(f"\nConverged in {i + 1} iterations")
-
-                print("\nFinal Bus Angles (radians):")
-                for bus_name in self.circuit.buses:
-                    print(f"{bus_name}: {self.angles[bus_name]:.6f} rad")
-
-                print("\nFinal Bus Voltages (p.u.):")
-                for bus_name in self.circuit.buses:
-                    print(f"{bus_name}: {self.voltages[bus_name]:.6f} p.u.")
-
-                print("\nFinal Power Mismatch:")
-                bus_list = list(self.circuit.buses.keys())
-                p_index = 0
-                q_index = len(
-                    [b for b in self.circuit.buses.values() if b.bus_type != "Slack Bus"])  # start of Q mismatches
-                for bus_name in bus_list:
-                    bus = self.circuit.buses[bus_name]
-                    if bus.bus_type == "Slack Bus":
-                        continue
-                    print(f"{bus_name}: ΔP = {mismatches[p_index]:.4f}")
-                    p_index += 1
-
-                for bus_name in bus_list:
-                    bus = self.circuit.buses[bus_name]
-                    if bus.bus_type == "PQ Bus":
-                        print(f"{bus_name}: ΔQ = {mismatches[q_index]:.4f}")
-                        q_index += 1
-
-                print("\nFinal Jacobian Matrix:")
-
-                # Extract the bus lists needed for labeling
-                bus_list = list(self.circuit.buses.keys())
-                pv_pq_buses = [b for b in bus_list if self.circuit.buses[b].bus_type in ["PV Bus", "PQ Bus"]]
-                pq_buses = [b for b in bus_list if self.circuit.buses[b].bus_type == "PQ Bus"]
-
-                # Create row and column labels
-                row_labels = []
-                for bus in pv_pq_buses:
-                    row_labels.append(f"∂P {bus}")
-                for bus in pq_buses:
-                    row_labels.append(f"∂Q {bus}")
-
-                col_labels = []
-                for bus in pv_pq_buses:
-                    col_labels.append(f"∂δ {bus}")
-                for bus in pq_buses:
-                    col_labels.append(f"∂V {bus}")
-
-                # Calculate max width for row labels
-                row_width = max(len(label) for label in row_labels) + 1
-                col_width = 12
-
-                print(" " * row_width, end="")
-                for col in col_labels:
-                    print(f"{col:^{col_width}}", end="")
-                print()
-
-                for i, row_label in enumerate(row_labels):
-                    print(f"{row_label:{row_width}}", end="")
-                    for j in range(J.shape[1]):
-                        print(f"{J[i, j]:^{col_width}.6f}", end="")
-                    print()
-
                 return True
 
-            # Step 4: update x(i+1) = x(i) + Δx
             idx = 0
-
-            # update all angles for PV and PQ buses
             for bus_name, bus in self.circuit.buses.items():
-                if bus.bus_type != "Slack Bus":  # Update angles for PV and PQ buses
+                if bus.bus_type != "Slack Bus":
                     self.angles[bus_name] += delta_x[idx]
                     idx += 1
-
-            # update voltages for PQ buses only
             for bus_name, bus in self.circuit.buses.items():
-                if bus.bus_type == "PQ Bus":  # Update voltages only for PQ buses
+                if bus.bus_type == "PQ Bus":
                     self.voltages[bus_name] += delta_x[idx]
                     idx += 1
+
+            self.track_voltage(f"Iteration {i + 1}")
 
         print("Max iterations reached without convergence.")
         return False
@@ -239,6 +204,8 @@ class Solution:
         self.zbus_pos = self.circuit.zbus_pos
         self.zbus_neg = self.circuit.zbus_neg
         self.zbus_zero = self.circuit.zbus_zero
+
+        self.track_voltage("Before Fault")
 
         print("Select fault type:")
         print("1. Three-phase fault")
@@ -281,6 +248,10 @@ class Solution:
             V2_k = 0
             Va, _, _ = self.sequence_to_phase(V0_k, V1_k, V2_k)
             print(f"Post-fault Phase A voltage at {k}: {abs(Va):.4f} p.u. ∠{np.angle(Va, deg=True):.2f}°")
+            if self.tracked_bus == k:
+                self.voltages[self.tracked_bus] = abs(Va)
+
+        self.track_voltage("After Fault")
 
     def perform_lg_fault(self, bus, v_prefault, Zf):
         print("\n>>> Performing line‑to‑ground (LG) fault analysis")
@@ -301,6 +272,10 @@ class Solution:
             V0_k = -Z0_kn * I0
             Va, _, _ = self.sequence_to_phase(V0_k, V1_k, V2_k)
             print(f"Post-fault Phase A voltage at {k}: {abs(Va):.4f} p.u. ∠{np.angle(Va, deg=True):.2f}°")
+            if self.tracked_bus == k:
+                self.voltages[self.tracked_bus] = abs(Va)
+
+        self.track_voltage("After Fault")
 
     def perform_ll_fault(self, bus, v_prefault, Zf):
         print("\n>>> Performing line‑to‑line fault analysis")
@@ -322,6 +297,10 @@ class Solution:
             V0_k = 0
             Va, _, _ = self.sequence_to_phase(V0_k, V1_k, V2_k)
             print(f"Post-fault Phase A voltage at {k}: {abs(Va):.4f} p.u. ∠{np.angle(Va, deg=True):.2f}°")
+            if self.tracked_bus == k:
+                self.voltages[self.tracked_bus] = abs(Va)
+
+        self.track_voltage("After Fault")
 
     def perform_llg_fault(self, bus, v_prefault, Zf):
         print("\n>>> Performing double line-to-ground (LLG) fault analysis")
@@ -344,6 +323,10 @@ class Solution:
             V0_k = -Z0_kn * I0
             Va, _, _ = self.sequence_to_phase(V0_k, V1_k, V2_k)
             print(f"Post-fault Phase A voltage at {k}: {abs(Va):.4f} p.u ∠{np.angle(Va, deg=True):.2f}°")
+            if self.tracked_bus == k:
+                self.voltages[self.tracked_bus] = abs(Va)
+
+        self.track_voltage("After Fault")
 
 
 if __name__ == "__main__":
@@ -395,4 +378,3 @@ if __name__ == "__main__":
     solution.power_flow()
 
     solution.fault_study()
-

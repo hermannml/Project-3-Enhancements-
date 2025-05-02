@@ -1,6 +1,6 @@
-# Group 8 - Project 2
+# Project 3
 # ECE 2774
-# Milestone 1
+# Maria Hermann
 
 import math
 

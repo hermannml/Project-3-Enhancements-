@@ -1,6 +1,6 @@
-# Group 8 - Project 2
+# Project 3
 # ECE 2774
-# System Settings
+# Maria Hermann
 
 class SystemSettings:
     Sbase = 100  # [MVA] # should this be assumed or no

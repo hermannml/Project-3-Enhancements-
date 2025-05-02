@@ -1,6 +1,6 @@
-# Group 8 - Project 2
+# Project 3
 # ECE 2774
-# Milestone 2
+# Maria Hermann
 
 from typing import Dict
 import numpy as np
@@ -18,6 +18,7 @@ from TransmissionLine import TransmissionLine
 from Transformer import Transformer
 from Generator import Generator
 from Load import Load
+
 class Circuit:
 
     def __init__(self, name: str):
@@ -32,12 +33,12 @@ class Circuit:
         self.loads: Dict[str, Load] = {}
 
         self.slack_bus = None
+
         self.ybus = self.calc_ybus()
         self.ybus_pos = self.calc_ybus_pos_sequence()
         self.ybus_neg = self.calc_ybus_neg_sequence()
         self.ybus_zero = self.calc_ybus_zero_sequence()
         self.zbus_pos, self.zbus_neg, self.zbus_zero = self.calc_sequence_zbuses()
-
 
     def add_bus(self, bus: str, base_kv: float):
 
@@ -153,7 +154,10 @@ class Circuit:
 
         if name in self.loads:
             raise ValueError(f"Load '{name}' already exists.")
+
         self.loads[name] = Load(name, self.buses[bus], real_power, reactive_power)
+
+        self.calc_ybus_pos_sequence()
 
     def calc_ybus(self):
         busnames = list(self.buses.keys())

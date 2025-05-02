@@ -1,6 +1,7 @@
-# Group 8 - Project 2
+# Project 3
 # ECE 2774
-# Milestone 1
+# Maria Hermann
+
 import numpy as np
 import pandas as pd
 from Bus import Bus

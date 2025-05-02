@@ -1,14 +1,14 @@
-# Project 2 - Power Systems Simulator
-# ECE 2774 - Advanced Power Systems Analysis
-# Group 8
-# Cecilia Espadas & Maria Luiza Hermann
+# Project 3
+# ECE 2774
+# Maria Hermann
 
 from Circuit import Circuit
 from Solution import Solution
 
-# create test circuit
+# Step 1: create test circuit
 circuit1 = Circuit("Test Circuit")
 
+# Step 2: Load your Circuit
 # ADD BUSES
 circuit1.add_bus("Bus1", 20)
 circuit1.add_bus("Bus2", 230)
@@ -43,8 +43,18 @@ circuit1.add_load("L1", "Bus3", 110, 50)
 circuit1.add_load("L2", "Bus4", 100, 70)
 circuit1.add_load("L3", "Bus5", 100, 65)
 
+# Step 3: Initialize Solution object
 solution = Solution(circuit1)
 
-solution.power_flow()
+# Step 4: Start voltage tracking for a specific bus
+solution.set_tracked_bus("Bus3")
 
+# Step 5: Run power flow (Newton-Raphson)
+solution.power_flow()  # Tracking will happen inside
+
+# Step 5: Run fault analysis (user input required during execution)
 solution.fault_study()
+
+# Step 6: Plot voltage profile at the tracked bus
+solution.plot_voltage_profile()
+
