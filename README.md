@@ -1,4 +1,6 @@
 # Project-3-Enhancements
+ECE 2774 University of Pittsburgh
+Maria Luiza Hermann
 
 ## Purpose and theoretical background
 The Power System Simulator is a Python-based tool for modeling and analyzing power systems through a modular, object-oriented design. Users can construct networks using components like buses, transmission lines, transformers, generators, and loads, and simulate system behavior under normal and faulted conditions using per-unit calculations. Core features include automated Ybus/Zbus matrix formation, Newton-Raphson power flow, and symmetrical/asymmetrical fault analysis with full sequence modeling.
